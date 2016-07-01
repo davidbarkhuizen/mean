@@ -1,0 +1,17 @@
+{
+  "name": "gpxmaps",
+  "version": "0.0.1",
+  "description": "nodejs express mongo skeleton",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gpx"
+  ],
+  "author": "david barkhuizen",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
