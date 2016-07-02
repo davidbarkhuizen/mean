@@ -3,6 +3,8 @@
 	"port": 8888,
 	"tls" : true,
 
+	"staticRoot" : "static_root",
+
 	"tlsCertPassPhrase": "thequickbrownfox",
 	"tlsPfx": "localhost_rsa_2048.pfx",
 	"tlsPemKey" : "localhost_rsa_2048.key.pem",

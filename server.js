@@ -5,7 +5,7 @@ var environment = (process.env.NODE_ENV || 'dev');
 // config
 //
 var configFolderPath = path.join(process.cwd(), 'config/env', environment);
-var configure = require('./configure')(configFolderPath);
+var configure = require('./fx/configure')(configFolderPath);
 var config = configure.getConfig();
 if (config === null)
 	throw 'failed to load config';
@@ -46,6 +46,10 @@ function runServer(host, port, tls) {
     var url = protocol + '://' + host + ':' + port.toString();
 
     app.use('/', router.getRouter());
+
+    // static content
+    //
+    app.use(express.static(config.staticRoot));
 
     // bindRoutes(app, url);
 
