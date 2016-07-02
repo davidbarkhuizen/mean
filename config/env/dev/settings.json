@@ -1,5 +1,10 @@
 {
+	"host": "localhost",
 	"port": 8888,
-	"server": "localhost",
-	"protocol": "http"
+	"tls" : true,
+
+	"tlsCertPassPhrase": "thequickbrownfox",
+	"tlsPfx": "localhost_rsa_2048.pfx",
+	"tlsPemKey" : "localhost_rsa_2048.key.pem",
+	"tlsPemCert" : "localhost_rsa_2048.cert.pem"	
 }

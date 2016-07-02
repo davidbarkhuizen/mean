@@ -1,10 +1,9 @@
-2016 - david barkhuizen  
+2016 - david barkhuizen
+# NEM.fx
+#### open source javascript server stack	  
 
-# <NEM class="fx"></NEM>
-- [nodejs](https://nodejs.org/en/)
-- [expressjs](http://expressjs.com/)
-- [mongodb](https://www.mongodb.com/)
+- [nodejs](https://nodejs.org/en/) - runtime
+- [expressjs](http://expressjs.com/) - web server
+- [mongodb](https://www.mongodb.com/) - data persistence
 
-open source javascript server stack  
-skeleton framework  
-
+-- [log4js](https://github.com/nomiddlename/log4js-node) - logging

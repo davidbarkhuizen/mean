@@ -1,40 +1,80 @@
 var path = require('path');
 var fs = require('fs');
+var log4js = require('log4js');
 
 var DEFAULT = Object.freeze({
 	NODE_ENV : 'dev',
 	SUB_FOLDER : 'config/env',
-	FILE_NAME : 'settings.json',
 	ENCODING : 'utf8',
-	REFRESH_FAILURE_LIMIT : 10
+	FILE_NAME : 'settings.json',
+	LOG4JS_FILE_NAME : 'log4js.json',
+	LOG4JS_RELOAD_SECS : 60
 });
 
-var environment = (process.env.NODE_ENV || DEFAULT.NODE_ENV); 
-
-var configFilePath = path.join(process.cwd(), DEFAULT.SUB_FOLDER, environment, DEFAULT.FILE_NAME);
-
-var config = null;
-
-var refreshFailCount = 0;
-function refreshSync() {
-
-	if (refreshFailCount >= DEFAULT.REFRESH_FAILURE_LIMIT) {
-		throw 'config refresh failure limit exceeded';
-	}
-
-	try {
-		var jsonString = fs.readFileSync(configFilePath, DEFAULT.ENCODING).toString(); 
-		config = JSON.parse(jsonString);
-		return config;
-	}
-	catch (e) { 
-		refreshFailCount = refreshFailCount + 1;
-		return config;  
-	}
+// JSON config
+//
+function loadConfig(folderPath) {
+	var configFilePath = path.join(folderPath, DEFAULT.FILE_NAME);
+	console.log('loading config @ ' + configFilePath);
+	var jsonString = fs.readFileSync(configFilePath, DEFAULT.ENCODING).toString(); 
+	config = JSON.parse(jsonString);
+	return config;
 }
 
+var logger;
 
-function getSync() { return config || refreshSync(); }
+// log4js
+//
+function configureLog4js(folderPath) {
+	var logConfigFilePath = path.join(folderPath, DEFAULT.LOG4JS_FILE_NAME);
+	console.log('loading log4js config @ ' + logConfigFilePath);
+	log4js.configure(logConfigFilePath, { reloadSecs: DEFAULT.LOG4JS_RELOAD_SECS }); 	
+	logger = log4js.getLogger('configure');
+}
 
-exports.getSync = getSync;
-exports.refreshSync = refreshSync;
+function getTlsOptionsSync(config, folderPath) {
+
+    var options = { passphrase: config.tlsCertPassPhrase };
+
+    logger.info('determining TLS certificate format...');
+
+    // prefer PEM
+    //
+    try { 
+
+    	var pemKeyFilePath = path.join(folderPath, config.tlsPemKey);
+        var pemKey  = fs.readFileSync(pemKeyFilePath, DEFAULT.ENCODING);
+
+        var pemCertFilePath = path.join(folderPath, config.tlsPemCert);
+        var pemCert = fs.readFileSync(pemCertFilePath, DEFAULT.ENCODING);
+
+        logger.info('PEM')
+    
+        options.key = pemKey;
+        options.cert = pemCert;
+    }
+    catch (e) { // but settle for PFX
+
+    	var pfxFilePath = path.join(folderPath, config.tlsPfx);
+        var pfx = fs.readFileSync(pfxFilePath, DEFAULT.ENCODING);
+
+        logger.info('PFX')
+
+        options.pfx = pfx;
+    }
+
+    return options;
+}
+
+module.exports = function(configFolderPath) {
+
+	var config = loadConfig(configFolderPath);
+	configureLog4js(configFolderPath);
+
+	var tlsOptions = getTlsOptionsSync(config, configFolderPath);
+
+	return {
+		getConfig: function(){ return config; },
+		getTlsOptions: function() { return tlsOptions; }
+	};
+};
