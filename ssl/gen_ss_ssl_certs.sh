@@ -20,5 +20,8 @@ openssl pkcs12 -inkey localhost_rsa_2048.key.pem -in localhost_rsa_2048.cert.pem
 # have extensions such as .pfx and .p12. PFX files are typically used on Windows machines to 
 # import and export certificates and private keys.
 
-mv *.pem ../config/env/$1/
-mv *.pfx ../config/env/$1/
+# copy to environment
+# default to 'dev'
+
+mv *.pem ../config/env/${1:-'dev'}/
+mv *.pfx ../config/env/${1:-'dev'}/
