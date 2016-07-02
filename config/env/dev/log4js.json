@@ -9,7 +9,7 @@
         },
         {
             "type": "dateFile",
-            "filename": "nemfx.log",
+            "filename": "log/nemfx.log",
             "pattern": ".yyyy-MM-dd",
             "alwaysIncludePattern": false,
             "layout": {

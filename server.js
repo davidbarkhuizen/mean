@@ -27,6 +27,8 @@ var express = require('express');
 
 var app = express();
 
+var router = require('./app/router');
+
 function runServer(host, port, tls) {
 
 	tls = tls || false;
@@ -43,9 +45,10 @@ function runServer(host, port, tls) {
 
     var url = protocol + '://' + host + ':' + port.toString();
 
+    app.use('/', router.getRouter());
+
     // bindRoutes(app, url);
 
-    log.info('starting...');
     server.listen(port, function () {
         log.info('---------------------------------------');
         log.info('NEM.fx - nodejs expressjs mongodb');
