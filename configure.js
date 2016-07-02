@@ -1,17 +1,40 @@
+var path = require('path');
 var fs = require('fs');
 
-var environment = process.env.ENVIRONMENT;
+var DEFAULT = Object.freeze({
+	NODE_ENV : 'dev',
+	SUB_FOLDER : 'config/env',
+	FILE_NAME : 'settings.json',
+	ENCODING : 'utf8',
+	REFRESH_FAILURE_LIMIT : 10
+});
 
-var configFilePath = 'config/env/' + environment + '/settings.json';
+var environment = (process.env.NODE_ENV || DEFAULT.NODE_ENV); 
 
-function load(onSuccess, onError) {
+var configFilePath = path.join(process.cwd(), DEFAULT.SUB_FOLDER, environment, DEFAULT.FILE_NAME);
 
-	fs.readFile(configFilePath, 'utf8', function (err, data) {
-	
-		if (err) onError(err);
-		try { onSuccess(JSON.parse(data)); }
-		catch (e) { return onError(e);  }
-	});
+var config = null;
+
+var refreshFailCount = 0;
+function refreshSync() {
+
+	if (refreshFailCount >= DEFAULT.REFRESH_FAILURE_LIMIT) {
+		throw 'config refresh failure limit exceeded';
+	}
+
+	try {
+		var jsonString = fs.readFileSync(configFilePath, DEFAULT.ENCODING).toString(); 
+		config = JSON.parse(jsonString);
+		return config;
+	}
+	catch (e) { 
+		refreshFailCount = refreshFailCount + 1;
+		return config;  
+	}
 }
 
-exports.load = load;
+
+function getSync() { return config || refreshSync(); }
+
+exports.getSync = getSync;
+exports.refreshSync = refreshSync;

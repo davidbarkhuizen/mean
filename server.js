@@ -1,24 +1,26 @@
-var express = require('express');
+// config
+//
 var configure = require('./configure');
+var config = configure.getSync();
+if (config === null)
+	throw 'failed to load config';
 
-function run(config) {
+var express = require('express');
 
-	var app = express();
+var app = express();
 
-	var url = config.protocol + '://' + config.server + ':' + config.port; 
+function run(protocol, server, port) {
+
+	var url = protocol + '://' + server + ':' + port;
 
 	app.get('/', function (req, res) {
-		res.send('Hello World!');
+		res.send(url);
 	});
 
-	app.listen(config.port, function () {
+	app.listen(port, function () {
+		console.log('men');
 		console.log(url);
 	});
 }
 
-function failedToLoadConfig(err) {
-	console.log('failed to load config');
-	console.log(err);
-}
-
-configure.load(run, failedToLoadConfig);
+run(config.protocol, config.server, config.port);

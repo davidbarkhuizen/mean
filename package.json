@@ -1,7 +1,7 @@
 {
-  "name": "gpxmaps",
+  "name": "mean",
   "version": "0.0.1",
-  "description": "nodejs express mongo skeleton",
+  "description": "mongo express angular nodejs stack",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,6 +12,7 @@
   "author": "david barkhuizen",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "path": "^0.12.7"
   }
 }
